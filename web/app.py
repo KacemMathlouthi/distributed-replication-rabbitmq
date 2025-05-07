@@ -2,13 +2,18 @@ import streamlit as st
 import pandas as pd
 import json
 import os
-import time
 import plotly.graph_objects as go
 from datetime import datetime
-import pika
-import uuid
 import subprocess
-from collections import defaultdict
+import sys
+
+# Add the src directory to the Python path so we can import the client modules
+sys.path.append('/app/src')
+
+# Import client functions from existing scripts
+from clientWriter import send_message as client_send_message
+from clientReader import read_last_line as client_read_last_line
+from clientReader_v2 import read_all_lines as client_read_all_lines
 
 # Set page configuration
 st.set_page_config(
@@ -39,181 +44,45 @@ def read_replica_data(replica_id):
             data = [line.strip() for line in f.readlines() if line.strip()]
     return data
 
-# Function to send write message to RabbitMQ
+# Function to send write message to RabbitMQ (using clientWriter)
 def send_write_message(line_number, content):
     try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
-        channel = connection.channel()
-        
-        # Declare exchange for broadcasting to all replicas
-        channel.exchange_declare(exchange='replication_exchange', exchange_type='fanout')
-        
-        # Create the message
         message = f"{line_number} {content}"
-        
-        # Publish message to exchange
-        channel.basic_publish(
-            exchange='replication_exchange',
-            routing_key='',
-            body=message
-        )
-        
-        # Log the operation
-        log_client_operation("WRITE", message)
-        
-        connection.close()
+        client_send_message(message)
         return True
     except Exception as e:
         st.error(f"Failed to send message: {str(e)}")
         return False
 
-# Function to log client operation
-def log_client_operation(operation_type, content):
-    log_dir = "/app/replicas"
-    log_file = f"{log_dir}/client_operations.log"
-    
-    log_entry = {
-        "timestamp": datetime.now().isoformat(),
-        "operation": operation_type,
-        "content": content,
-        "client": "web_ui"
-    }
-    
-    with open(log_file, 'a') as f:
-        f.write(json.dumps(log_entry) + "\n")
-
-# Function to request last line
+# Function to request last line (using clientReader)
 def read_last_line():
     try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
-        channel = connection.channel()
-        
-        result = channel.queue_declare(queue='', exclusive=True)
-        callback_queue = result.method.queue
-        
-        correlation_id = str(uuid.uuid4())
-        
-        responses = []
-        
-        def on_response(ch, method, props, body):
-            if props.correlation_id == correlation_id:
-                response = body.decode()
-                responses.append((props.reply_to, response))
-        
-        channel.basic_consume(
-            queue=callback_queue,
-            on_message_callback=on_response,
-            auto_ack=True
-        )
-        
-        log_client_operation("READ_LAST", "Request sent to all replicas")
-        
-        # Send request to all replicas
-        for replica_id in range(1, 4):
-            channel.basic_publish(
-                exchange='',
-                routing_key=f'replica{replica_id}',
-                properties=pika.BasicProperties(
-                    reply_to=callback_queue,
-                    correlation_id=correlation_id,
-                ),
-                body='Read Last'
-            )
-        
-        # Wait for responses with timeout
-        timeout = 3.0
-        start_time = time.time()
-        
-        while time.time() - start_time < timeout and len(responses) < 3:
-            connection.process_data_events(time_limit=0.1)
-        
-        connection.close()
-        return responses
+        result = client_read_last_line()
+        return [(response["replica"], response["content"]) for response in result.get("all_responses", [])]
     except Exception as e:
         st.error(f"Failed to read last line: {str(e)}")
         return []
 
-# Function to request all lines with majority consensus
+# Function to request all lines with majority consensus (using clientReader_v2)
 def read_all_lines():
     try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
-        channel = connection.channel()
+        results = client_read_all_lines()
         
-        result = channel.queue_declare(queue='', exclusive=True)
-        callback_queue = result.method.queue
-        
-        correlation_id = str(uuid.uuid4())
-        
-        replica_data = {
-            'replica1': [],
-            'replica2': [],
-            'replica3': []
+        # Process results to match the expected format
+        formatted_results = {
+            "replica_data": {},
+            "majority_lines": []
         }
         
-        replica_completed = {
-            'replica1': False,
-            'replica2': False,
-            'replica3': False
-        }
+        # Extract raw data
+        for replica, lines in results.get("raw_data", {}).items():
+            formatted_results["replica_data"][replica] = lines
         
-        def on_response(ch, method, props, body):
-            if props.correlation_id == correlation_id:
-                response = body.decode()
-                
-                if response == "__END__":
-                    replica_completed[props.reply_to] = True
-                else:
-                    replica_data[props.reply_to].append(response)
-        
-        channel.basic_consume(
-            queue=callback_queue,
-            on_message_callback=on_response,
-            auto_ack=True
-        )
-        
-        log_client_operation("READ_ALL", "Requesting all data with majority consensus")
-        
-        # Send request to all replicas
-        for replica_id in range(1, 4):
-            channel.basic_publish(
-                exchange='',
-                routing_key=f'replica{replica_id}',
-                properties=pika.BasicProperties(
-                    reply_to=callback_queue,
-                    correlation_id=correlation_id,
-                ),
-                body='Read All'
-            )
-        
-        # Wait for responses with timeout
-        timeout = 5.0
-        start_time = time.time()
-        
-        while time.time() - start_time < timeout and not all(replica_completed.values()):
-            connection.process_data_events(time_limit=0.1)
-        
-        # Determine majority consensus
-        all_lines = set()
-        for lines in replica_data.values():
-            for line in lines:
-                all_lines.add(line)
-        
-        line_counts = defaultdict(int)
-        for replica, lines in replica_data.items():
-            for line in lines:
-                line_counts[line] += 1
-        
-        majority_lines = []
-        for line, count in sorted(line_counts.items()):
-            if count >= 2:  # Majority of 3
-                majority_lines.append((line, count))
-        
-        connection.close()
-        
-        return {
-            "replica_data": replica_data,
-            "majority_lines": majority_lines
-        }
+        # Extract majority lines
+        for line, count in results.get("majority_lines", []):
+            formatted_results["majority_lines"].append((line, count))
+            
+        return formatted_results
     except Exception as e:
         st.error(f"Failed to read all lines: {str(e)}")
         return {

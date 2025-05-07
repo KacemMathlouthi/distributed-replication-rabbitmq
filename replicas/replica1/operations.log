@@ -11,3 +11,6 @@
 {"timestamp": "2025-05-07T15:14:22.323065", "operation": "WRITE", "content": "2 test test", "replica": "replica1"}
 {"timestamp": "2025-05-07T15:14:27.516594", "operation": "READ_LAST", "content": "2 test test", "replica": "replica1"}
 {"timestamp": "2025-05-07T15:14:34.109607", "operation": "READ_ALL", "content": "Full file request", "replica": "replica1"}
+{"timestamp": "2025-05-07T16:05:16.815383", "operation": "STARTUP", "content": "Replica 1 started", "replica": "replica1"}
+{"timestamp": "2025-05-07T16:06:15.224752", "operation": "READ_LAST", "content": "2 test test", "replica": "replica1"}
+{"timestamp": "2025-05-07T16:06:24.225117", "operation": "READ_ALL", "content": "Full file request", "replica": "replica1"}
