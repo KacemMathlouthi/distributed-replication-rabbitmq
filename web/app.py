@@ -1,12 +1,10 @@
 import streamlit as st
 import pandas as pd
-import plotly.graph_objects as go
 from datetime import datetime
-
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils.utils import *
 
 # Set page configuration
@@ -51,89 +49,10 @@ col1, col2 = st.columns([2, 1])
 
 with col1:
     st.header("System Visualization")
-    
-    # Get replica statuses and create a visualization
-    statuses = check_replica_status()
-    fig = go.Figure()
-    
-    # Add RabbitMQ node
-    fig.add_trace(go.Scatter(
-        x=[0], y=[0],
-        mode='markers+text',
-        marker=dict(size=40, color='lightskyblue', symbol='square'),
-        text=['RabbitMQ'],
-        textposition='bottom center',
-        name='RabbitMQ'
-    ))
-    
-    # Add replicas
-    x_positions = [-1, 0, 1]
-    for i, (replica, is_running) in enumerate(statuses.items()):
-        color = 'green' if is_running else 'red'
-        fig.add_trace(go.Scatter(
-            x=[x_positions[i]], y=[-1.5],
-            mode='markers+text',
-            marker=dict(size=30, color=color),
-            text=[replica],
-            textposition='bottom center',
-            name=replica
-        ))
-        
-        # Add connection line to RabbitMQ
-        fig.add_trace(go.Scatter(
-            x=[x_positions[i], 0],
-            y=[-1.5, 0],
-            mode='lines',
-            line=dict(color=color, width=2),
-            showlegend=False
-        ))
-    
-    # Add clients
-    fig.add_trace(go.Scatter(
-        x=[-1.5, 1.5],
-        y=[1.5, 1.5],
-        mode='markers+text',
-        marker=dict(size=30, color='orange'),
-        text=['Writer', 'Reader'],
-        textposition='top center',
-        name='Clients'
-    ))
-    
-    # Add connection lines to RabbitMQ
-    fig.add_trace(go.Scatter(
-        x=[-1.5, 0],
-        y=[1.5, 0],
-        mode='lines',
-        line=dict(color='orange', width=2),
-        showlegend=False
-    ))
-    
-    fig.add_trace(go.Scatter(
-        x=[1.5, 0],
-        y=[1.5, 0],
-        mode='lines',
-        line=dict(color='orange', width=2),
-        showlegend=False
-    ))
-    
-    # Update layout
-    fig.update_layout(
-        title='System Architecture',
-        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        width=600,
-        height=500
-    )
-    
-    st.plotly_chart(fig)
+    st.plotly_chart(draw_system_architecture(), use_container_width=True)
 
 with col2:
     st.header("System Status")
-    
-    # Display replica status
-    for replica, is_running in statuses.items():
-        status_text = "🟢 Running" if is_running else "🔴 Stopped"
-        st.text(f"{replica}: {status_text}")
     
     # Display time since last operation
     client_logs = read_logs("/app/replicas/client_operations.log")

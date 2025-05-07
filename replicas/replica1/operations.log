@@ -38,3 +38,6 @@
 {"timestamp": "2025-05-07T17:28:08.731648", "operation": "READ_LAST", "content": "4 panne simulation in 2", "replica": "replica1"}
 {"timestamp": "2025-05-07T17:28:10.868693", "operation": "READ_ALL", "content": "Full file request", "replica": "replica1"}
 {"timestamp": "2025-05-07T17:31:58.308897", "operation": "STARTUP", "content": "Replica 1 started", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:43:18.087345", "operation": "STARTUP", "content": "Replica 1 started", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:47:21.803849", "operation": "STARTUP", "content": "Replica 1 started", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:50:59.455720", "operation": "STARTUP", "content": "Replica 1 started", "replica": "replica1"}
