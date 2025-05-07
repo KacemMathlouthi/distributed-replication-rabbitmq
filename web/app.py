@@ -1,19 +1,8 @@
 import streamlit as st
 import pandas as pd
-import json
-import os
 import plotly.graph_objects as go
 from datetime import datetime
-import subprocess
-import sys
-
-# Add the src directory to the Python path so we can import the client modules
-sys.path.append('/app/src')
-
-# Import client functions from existing scripts
-from clientWriter import send_message as client_send_message
-from clientReader import read_last_line as client_read_last_line
-from clientReader_v2 import read_all_lines as client_read_all_lines
+from utils.utils import *
 
 # Set page configuration
 st.set_page_config(
@@ -21,107 +10,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-# Function to read log files
-def read_logs(log_file):
-    logs = []
-    if os.path.exists(log_file):
-        with open(log_file, 'r') as f:
-            for line in f:
-                try:
-                    log_entry = json.loads(line.strip())
-                    logs.append(log_entry)
-                except json.JSONDecodeError:
-                    pass
-    return logs
-
-# Function to read replica data files
-def read_replica_data(replica_id):
-    file_path = f"/app/replicas/replica{replica_id}/data.txt"
-    data = []
-    if os.path.exists(file_path):
-        with open(file_path, 'r') as f:
-            data = [line.strip() for line in f.readlines() if line.strip()]
-    return data
-
-# Function to send write message to RabbitMQ (using clientWriter)
-def send_write_message(line_number, content):
-    try:
-        message = f"{line_number} {content}"
-        client_send_message(message)
-        return True
-    except Exception as e:
-        st.error(f"Failed to send message: {str(e)}")
-        return False
-
-# Function to request last line (using clientReader)
-def read_last_line():
-    try:
-        result = client_read_last_line()
-        return [(response["replica"], response["content"]) for response in result.get("all_responses", [])]
-    except Exception as e:
-        st.error(f"Failed to read last line: {str(e)}")
-        return []
-
-# Function to request all lines with majority consensus (using clientReader_v2)
-def read_all_lines():
-    try:
-        results = client_read_all_lines()
-        
-        # Process results to match the expected format
-        formatted_results = {
-            "replica_data": {},
-            "majority_lines": []
-        }
-        
-        # Extract raw data
-        for replica, lines in results.get("raw_data", {}).items():
-            formatted_results["replica_data"][replica] = lines
-        
-        # Extract majority lines
-        for line, count in results.get("majority_lines", []):
-            formatted_results["majority_lines"].append((line, count))
-            
-        return formatted_results
-    except Exception as e:
-        st.error(f"Failed to read all lines: {str(e)}")
-        return {
-            "replica_data": {},
-            "majority_lines": []
-        }
-
-# Function to check replica status
-def check_replica_status():
-    statuses = {}
-    for replica_id in range(1, 4):
-        container_name = f"distributed-replication-rabbitmq-replica{replica_id}-1"
-        try:
-            result = subprocess.run(
-                f"docker inspect -f '{{{{.State.Running}}}}' {container_name}",
-                shell=True, capture_output=True, text=True
-            )
-            statuses[f"replica{replica_id}"] = result.stdout.strip() == "true"
-        except:
-            statuses[f"replica{replica_id}"] = False
-    return statuses
-
-# Function to stop a replica
-def stop_replica(replica_id):
-    container_name = f"distributed-replication-rabbitmq-replica{replica_id}-1"
-    try:
-        subprocess.run(f"docker stop {container_name}", shell=True)
-        return True
-    except:
-        return False
-
-# Function to start a replica
-def start_replica(replica_id):
-    container_name = f"distributed-replication-rabbitmq-replica{replica_id}-1"
-    try:
-        subprocess.run(f"docker start {container_name}", shell=True)
-        return True
-    except:
-        return False
 
 # Define the Streamlit app layout
 st.title("Distributed Replication System Dashboard")
