@@ -1,0 +1,13 @@
+{"timestamp": "2025-05-07T15:02:11.427860", "operation": "STARTUP", "content": "Replica 1 started", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:12:19.807837", "operation": "READ_LAST", "content": "No data", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:12:50.777013", "operation": "WRITE", "content": "1 Sample text", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:13:13.034752", "operation": "READ_LAST", "content": "1 Sample text", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:13:26.917134", "operation": "WRITE", "content": "1 test test", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:13:41.015402", "operation": "READ_LAST", "content": "1 Sample text", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:13:46.968178", "operation": "READ_LAST", "content": "1 Sample text", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:13:53.147875", "operation": "READ_ALL", "content": "Full file request", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:13:59.240242", "operation": "READ_LAST", "content": "1 Sample text", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:14:09.936209", "operation": "WRITE", "content": "1 test test", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:14:22.323065", "operation": "WRITE", "content": "2 test test", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:14:27.516594", "operation": "READ_LAST", "content": "2 test test", "replica": "replica1"}
+{"timestamp": "2025-05-07T15:14:34.109607", "operation": "READ_ALL", "content": "Full file request", "replica": "replica1"}

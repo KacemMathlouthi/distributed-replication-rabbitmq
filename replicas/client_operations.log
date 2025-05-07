@@ -1,0 +1,12 @@
+{"timestamp": "2025-05-07T15:12:19.804981", "operation": "READ_LAST", "content": "Request sent to all replicas", "client": "web_ui"}
+{"timestamp": "2025-05-07T15:12:50.774694", "operation": "WRITE", "content": "1 Sample text", "client": "web_ui"}
+{"timestamp": "2025-05-07T15:13:13.032474", "operation": "READ_LAST", "content": "Request sent to all replicas", "client": "web_ui"}
+{"timestamp": "2025-05-07T15:13:26.915714", "operation": "WRITE", "content": "1 test test", "client": "web_ui"}
+{"timestamp": "2025-05-07T15:13:41.012515", "operation": "READ_LAST", "content": "Request sent to all replicas", "client": "web_ui"}
+{"timestamp": "2025-05-07T15:13:46.965914", "operation": "READ_LAST", "content": "Request sent to all replicas", "client": "web_ui"}
+{"timestamp": "2025-05-07T15:13:53.143620", "operation": "READ_ALL", "content": "Requesting all data with majority consensus", "client": "web_ui"}
+{"timestamp": "2025-05-07T15:13:59.238026", "operation": "READ_LAST", "content": "Request sent to all replicas", "client": "web_ui"}
+{"timestamp": "2025-05-07T15:14:09.933911", "operation": "WRITE", "content": "1 test test", "client": "web_ui"}
+{"timestamp": "2025-05-07T15:14:22.319757", "operation": "WRITE", "content": "2 test test", "client": "web_ui"}
+{"timestamp": "2025-05-07T15:14:27.514744", "operation": "READ_LAST", "content": "Request sent to all replicas", "client": "web_ui"}
+{"timestamp": "2025-05-07T15:14:34.108183", "operation": "READ_ALL", "content": "Requesting all data with majority consensus", "client": "web_ui"}

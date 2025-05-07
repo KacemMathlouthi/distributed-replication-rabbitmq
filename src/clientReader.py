@@ -1,5 +1,4 @@
 import pika
-import sys
 import uuid
 import time
 import json
