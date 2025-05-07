@@ -50,16 +50,3 @@ def connect_with_retry(max_retries=10, retry_interval=2):
             time.sleep(retry_interval)
     
     raise Exception("Failed to connect to RabbitMQ after multiple attempts")
-
-if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: python client_writer.py <line_number> <text>")
-        sys.exit(1)
-    
-    line_number = sys.argv[1]
-    text = ' '.join(sys.argv[2:])
-    message = f"{line_number} {text}"
-    
-    print("Connecting to RabbitMQ...")
-    # Use with retry when running in docker
-    send_message(message)

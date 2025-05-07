@@ -97,7 +97,3 @@ def read_last_line():
     
     connection.close()
     return result
-
-if __name__ == "__main__":
-    print("Connecting to RabbitMQ...")
-    read_last_line()
