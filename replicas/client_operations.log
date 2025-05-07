@@ -14,3 +14,5 @@
 {"timestamp": "2025-05-07T16:06:15.422597", "operation": "RECEIVED_FIRST", "content": "replica3: 2 test test", "client": "client_reader"}
 {"timestamp": "2025-05-07T16:06:24.222680", "operation": "READ_ALL", "content": "Requesting all data with majority consensus", "client": "client_reader_v2"}
 {"timestamp": "2025-05-07T16:06:24.424978", "operation": "CONSENSUS_RESULT", "content": "{\"majority_lines\": [[\"1 Sample text\", 3], [\"2 test test\", 3]], \"raw_data\": {\"replica1\": [\"1 Sample text\", \"2 test test\"], \"replica2\": [\"1 Sample text\", \"2 test test\"], \"replica3\": [\"1 Sample text\", \"2 test test\"]}}", "client": "client_reader_v2"}
+{"timestamp": "2025-05-07T16:55:07.172030", "operation": "READ_LAST", "content": "Request sent to all replicas", "client": "client_reader"}
+{"timestamp": "2025-05-07T16:55:07.374240", "operation": "RECEIVED_FIRST", "content": "replica2: 2 test test", "client": "client_reader"}
