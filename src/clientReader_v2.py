@@ -120,4 +120,8 @@ def read_all_lines():
         "majority_lines": majority_lines,
         "raw_data": raw_data
     }))
-    
+
+    return {
+        "majority_lines": majority_lines,
+        "raw_data": raw_data
+    }
