@@ -4,14 +4,14 @@ from datetime import datetime
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils.utils import *
 
 # Set page configuration
 st.set_page_config(
     page_title="Distributed Replication System",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
 )
 
 # Define the Streamlit app layout
@@ -53,7 +53,7 @@ with col1:
 
 with col2:
     st.header("System Status")
-    
+
     # Display time since last operation
     client_logs = read_logs("/app/replicas/client_operations.log")
     if client_logs:
@@ -66,10 +66,15 @@ with col2:
 # Results section
 st.header("Results")
 
-tab1, tab2, tab3, tab4 = st.tabs(["Last Read Results", "Consensus Results", "Replica Content", "Operation Logs"])
+tab1, tab2, tab3, tab4 = st.tabs(
+    ["Last Read Results", "Consensus Results", "Replica Content", "Operation Logs"]
+)
 
 with tab1:
-    if hasattr(st.session_state, 'last_read_responses') and st.session_state.last_read_responses:
+    if (
+        hasattr(st.session_state, "last_read_responses")
+        and st.session_state.last_read_responses
+    ):
         responses = st.session_state.last_read_responses
         for replica_id, content in responses:
             st.success(f"{replica_id}: {content}")
@@ -77,13 +82,16 @@ with tab1:
         st.info("No read responses yet. Try reading the last line from the sidebar.")
 
 with tab2:
-    if hasattr(st.session_state, 'all_read_results') and st.session_state.all_read_results:
+    if (
+        hasattr(st.session_state, "all_read_results")
+        and st.session_state.all_read_results
+    ):
         results = st.session_state.all_read_results
-        
+
         st.subheader("Majority Consensus")
         for line, count in results["majority_lines"]:
             st.success(f"{line} (found in {count}/3 replicas)")
-        
+
         st.subheader("Raw Data from Each Replica")
         cols = st.columns(3)
         for i, (replica, lines) in enumerate(results["replica_data"].items()):
@@ -113,22 +121,29 @@ with tab4:
     all_logs = []
     client_logs = read_logs("/app/replicas/client_operations.log")
     all_logs.extend(client_logs)
-    
+
     for i in range(3):
         replica_logs = read_logs(f"/app/replicas/replica{i+1}/operations.log")
         all_logs.extend(replica_logs)
-    
+
     # Sort by timestamp
     all_logs.sort(key=lambda x: x.get("timestamp", ""))
-    
+
     # Convert to DataFrame for display
     if all_logs:
         df = pd.DataFrame(all_logs)
-        df['timestamp'] = pd.to_datetime(df['timestamp'])
-        df = df.sort_values('timestamp', ascending=False)
-        
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        df = df.sort_values("timestamp", ascending=False)
+
         # Format the DataFrame
-        display_df = df[['timestamp', 'client' if 'client' in df.columns else 'replica', 'operation', 'content']]
+        display_df = df[
+            [
+                "timestamp",
+                "client" if "client" in df.columns else "replica",
+                "operation",
+                "content",
+            ]
+        ]
         st.dataframe(display_df, use_container_width=True)
     else:
         st.info("No operation logs available yet")
@@ -142,5 +157,5 @@ st.markdown(
         }, 10000);
     </script>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
