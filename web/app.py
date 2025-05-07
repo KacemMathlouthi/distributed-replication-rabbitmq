@@ -46,24 +46,6 @@ if st.sidebar.button("Read All Lines (Majority Consensus)"):
         results = read_all_lines()
         st.session_state.all_read_results = results
 
-# Replica Control Section
-st.sidebar.subheader("Replica Control (Simulate Failures)")
-replica_to_control = st.sidebar.selectbox("Select Replica", ["replica1", "replica2", "replica3"])
-replica_id = int(replica_to_control[-1])
-
-col1, col2 = st.sidebar.columns(2)
-if col1.button(f"Stop {replica_to_control}"):
-    if stop_replica(replica_id):
-        st.sidebar.success(f"Stopped {replica_to_control}")
-    else:
-        st.sidebar.error(f"Failed to stop {replica_to_control}")
-
-if col2.button(f"Start {replica_to_control}"):
-    if start_replica(replica_id):
-        st.sidebar.success(f"Started {replica_to_control}")
-    else:
-        st.sidebar.error(f"Failed to start {replica_to_control}")
-
 # Main content area
 col1, col2 = st.columns([2, 1])
 

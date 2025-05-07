@@ -128,38 +128,3 @@ def check_replica_status():
         statuses[f"replica{replica_id}"] = data_file_exists or recent_activity or network_active
         
     return statuses
-
-# Function to stop a replica by sending a SIGTERM signal via RabbitMQ
-def stop_replica(replica_id):
-    try:
-        # Send a special control message to the replica to make it stop
-        connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
-        channel = connection.channel()
-        
-        channel.basic_publish(
-            exchange='',
-            routing_key=f'replica{replica_id}',
-            properties=pika.BasicProperties(
-                reply_to='web_control',
-                correlation_id='shutdown'
-            ),
-            body='SHUTDOWN'
-        )
-        connection.close()
-        
-        # Give it a moment to process
-        time.sleep(2)
-        return True
-    except Exception as e:
-        st.error(f"Failed to stop replica: {str(e)}")
-        return False
-
-# Function to start a replica - we can't do this directly, so we'll show instructions
-def start_replica(replica_id):
-    st.info(f"""
-    To restart replica{replica_id}, run this command from your host machine:
-    ```
-    docker-compose restart replica{replica_id}
-    ```
-    """)
-    return True

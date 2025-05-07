@@ -27,3 +27,14 @@
 {"timestamp": "2025-05-07T17:15:41.121303", "operation": "READ_ALL", "content": "Full file request", "replica": "replica1"}
 {"timestamp": "2025-05-07T17:16:45.050569", "operation": "WRITE", "content": "3 test", "replica": "replica1"}
 {"timestamp": "2025-05-07T17:16:49.953579", "operation": "READ_LAST", "content": "3 test", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:19:36.666844", "operation": "READ_ALL", "content": "Full file request", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:26:23.590292", "operation": "READ_LAST", "content": "3 test", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:26:28.557438", "operation": "READ_ALL", "content": "Full file request", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:27:01.621763", "operation": "WRITE", "content": "4 panne simulation in 2", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:27:07.329741", "operation": "READ_LAST", "content": "4 panne simulation in 2", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:27:16.510902", "operation": "READ_ALL", "content": "Full file request", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:27:48.231743", "operation": "READ_LAST", "content": "4 panne simulation in 2", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:27:50.924146", "operation": "READ_ALL", "content": "Full file request", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:28:08.731648", "operation": "READ_LAST", "content": "4 panne simulation in 2", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:28:10.868693", "operation": "READ_ALL", "content": "Full file request", "replica": "replica1"}
+{"timestamp": "2025-05-07T17:31:58.308897", "operation": "STARTUP", "content": "Replica 1 started", "replica": "replica1"}
